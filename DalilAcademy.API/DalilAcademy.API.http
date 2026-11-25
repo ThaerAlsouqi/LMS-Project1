@@ -1,0 +1,86 @@
+@host = http://localhost:5138
+
+### ─── Courses ─────────────────────────────────────────
+
+GET {{host}}/api/courses
+
+###
+GET {{host}}/api/courses/1
+
+### 404 — course does not exist
+GET {{host}}/api/courses/9999
+
+### 201 — create
+POST {{host}}/api/courses
+Content-Type: application/json
+
+{ "title": "Docker Basics", "price": 40, "instructorId": 1 }
+
+### 400 — empty title + negative price (ProblemDetails with "errors")
+POST {{host}}/api/courses
+Content-Type: application/json
+
+{ "title": "", "price": -5, "instructorId": 1 }
+
+### 409 — duplicate title
+POST {{host}}/api/courses
+Content-Type: application/json
+
+{ "title": "C# Fundamentals", "price": 50, "instructorId": 1 }
+
+### 204 — update
+PUT {{host}}/api/courses/1
+Content-Type: application/json
+
+{ "title": "C# Fundamentals (2nd Ed.)", "price": 55 }
+
+### 204 — delete (404 if it does not exist)
+DELETE {{host}}/api/courses/9999
+
+### ─── Students ────────────────────────────────────────
+
+GET {{host}}/api/students
+
+### 201 — register
+POST {{host}}/api/students
+Content-Type: application/json
+
+{ "fullName": "Omar Nasser", "email": "omar@example.com" }
+
+### 400 — empty name + invalid email
+POST {{host}}/api/students
+Content-Type: application/json
+
+{ "fullName": "", "email": "not-an-email" }
+
+### 409 — duplicate email
+POST {{host}}/api/students
+Content-Type: application/json
+
+{ "fullName": "Another Ahmad", "email": "ahmad@example.com" }
+
+### 204 — update email
+PUT {{host}}/api/students/1
+Content-Type: application/json
+
+{ "fullName": "Ahmad Ali", "email": "ahmad.ali@example.com" }
+
+### 404 — student does not exist
+GET {{host}}/api/students/9999
+
+### Bonus — courses for a student
+GET {{host}}/api/students/1/courses
+
+### ─── Enrollments ─────────────────────────────────────
+
+### 201 — enroll (run twice → 409 Conflict)
+POST {{host}}/api/enrollments
+Content-Type: application/json
+
+{ "studentId": 1, "courseId": 1 }
+
+### 404 — student not found
+POST {{host}}/api/enrollments
+Content-Type: application/json
+
+{ "studentId": 9999, "courseId": 1 }
